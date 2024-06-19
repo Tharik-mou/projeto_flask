@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 
 lista_produtos = [
     {"nome": "Coca-Cola", "descricao": "veneno"},
@@ -30,5 +30,18 @@ def produto(nome):
             return render_template("produto.html", produto=produto)
         
     return "O produto não existe!"
+
+
+@app.route("/produtos/cadastro")
+def cadastro_produto():
+    return render_template("cadastro_produto.html")
+
+@app.route("/produtos", methods=["POST"])
+def salvar_produto():
+    nome = request.form['nome']
+    descricao = request.form['descricao']
+    produto = { "nome": nome, "descricao": descricao }
+    lista_produtos.append(produto)
+    return redirect(url_for("produtos"))
 
 app.run(port=5001)
