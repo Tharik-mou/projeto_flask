@@ -40,7 +40,8 @@ def cadastro_produto():
 def salvar_produto():
     nome = request.form['nome']
     descricao = request.form['descricao']
-    produto = { "nome": nome, "descricao": descricao }
+    imagem = request.form['imagem']
+    produto = { "nome": nome, "descricao": descricao, "imagem": imagem }
     lista_produtos.append(produto)
     return redirect(url_for("produtos"))
 

@@ -10,6 +10,7 @@
     <h2>{{ produto.nome|e }}</h2>
 </a>
 <p>{{ produto.descricao|e }}</p>
+<img src="{{ produto.imagem|e }}" alt="">
 
 {% endfor %}
 {% endblock %}
