@@ -1,12 +1,23 @@
 from flask import Flask, render_template, request, redirect, url_for
 
-lista_produtos = [
-    {"nome": "Coca-Cola", "descricao": "veneno"},
-    {"nome": "Doritos", "descricao": "suja mão"},
-    {"nome": "Agua", "descricao": "limpa mão"},
-]
-
 app = Flask(__name__)
+
+def obter_produtos():
+    with open("produtos.csv", "r") as file:
+        lista_produtos = []
+        for linha in file:
+            nome, descricao, imagem, preco = linha.strip().split(",")
+
+            produto = {
+            "nome": nome,
+            "descricao": descricao,
+            "imagem": imagem,
+            "preco": preco
+            }
+
+            lista_produtos.append(produto)
+
+        return lista_produtos
 
 @app.route("/")
 def home():
@@ -20,12 +31,12 @@ def contato():
 
 @app.route("/produtos")
 def produtos():
-    return render_template("produtos.html", produtos=lista_produtos)
+    return render_template("produtos.html", produtos=obter_produtos())
 
 
 @app.route("/produtos/<nome>")
 def produto(nome):
-    for produto in lista_produtos:
+    for produto in obter_produtos():
         if produto['nome'] == nome:
             return render_template("produto.html", produto=produto)
         
@@ -41,8 +52,14 @@ def salvar_produto():
     nome = request.form['nome']
     descricao = request.form['descricao']
     imagem = request.form['imagem']
-    produto = { "nome": nome, "descricao": descricao, "imagem": imagem }
-    lista_produtos.append(produto)
+    preco = request.form['preco']
+    produto = { "nome": nome, "descricao": descricao, "imagem": imagem , "preco": preco}
+    adicionar_produtos(produto)
     return redirect(url_for("produtos"))
+
+def adicionar_produtos(produto):
+    with open("produtos.csv", "a") as file:
+        linha = f"{produto['nome']},{produto['descricao']},{produto['imagem']},{produto['preco']}\n"
+        file.write(linha)
 
 app.run(port=5001)
